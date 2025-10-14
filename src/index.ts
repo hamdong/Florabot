@@ -4,7 +4,6 @@ import {
   Events,
   GatewayIntentBits,
   MessageFlags,
-  TextChannel,
 } from 'discord.js';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -35,6 +34,11 @@ const client = new Client({
 client.quoteService = new QuoteService();
 client.commands = new Collection();
 client.manager = createMoonlinkManager(client);
+
+// Required for voice state updates
+client.on('raw', (packet) => {
+  client.manager.packetUpdate(packet);
+});
 
 // REGISTER: Commands
 const foldersPath = path.join(__dirname, 'commands');
@@ -70,37 +74,19 @@ for (const file of eventFiles) {
   const filePath = path.join(eventsPath, file);
   const event = require(filePath);
   if (event.once) {
-    client.once(event.name, (...args) => event.execute(...args));
+    event.manager
+      ? client.manager.once(event.name, (...args: any) =>
+          event.execute(...args, client)
+        )
+      : client.once(event.name, (...args) => event.execute(...args));
   } else {
-    client.on(event.name, (...args) => event.execute(...args));
+    event.manager
+      ? client.manager.on(event.name, (...args: any) =>
+          event.execute(...args, client)
+        )
+      : client.on(event.name, (...args) => event.execute(...args));
   }
 }
-
-client.on('raw', (packet) => {
-  client.manager.packetUpdate(packet);
-});
-
-client.manager.on('nodeConnected', (node) =>
-  console.log(`Node ${node.host} connected!`)
-);
-
-client.manager.on('nodeError', (node, error) =>
-  console.error(`Node ${node.host} error:`, error)
-);
-
-client.manager.on('trackStart', (player, track) => {
-  const channel = client.channels.cache.get(player.textChannelId);
-  if (channel && channel instanceof TextChannel) {
-    channel.send(`Now playing: **${track.title}**`);
-  }
-});
-
-client.manager.on('trackEnd', (player, track) => {
-  const channel = client.channels.cache.get(player.textChannelId);
-  if (channel && channel instanceof TextChannel) {
-    channel.send(`Track ended: ${track.title}`);
-  }
-});
 
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
@@ -114,7 +100,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 
   try {
-    await command.execute(interaction);
+    await command.execute(interaction, client);
   } catch (error) {
     console.error(error);
     if (interaction.replied || interaction.deferred) {
@@ -129,25 +115,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
       });
     }
   }
-});
-
-client.manager.on('queueEnd', (player) => {
-  const channel = client.channels.cache.get(player.textChannelId);
-  if (channel && channel instanceof TextChannel) {
-    channel.send(
-      'Queue ended. Disconnecting in 30 seconds if no new tracks are added.'
-    );
-  }
-
-  // Disconnect after a delay if no new tracks are added
-  setTimeout(() => {
-    if (!player.playing && player.queue.size === 0) {
-      player.destroy();
-      if (channel && channel instanceof TextChannel) {
-        channel.send('Disconnected due to inactivity.');
-      }
-    }
-  }, 30000); // 30 seconds
 });
 
 client.login(process.env.DISCORD_TOKEN);

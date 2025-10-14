@@ -15,6 +15,6 @@ export async function execute(
     await interaction.reply("I'm not playing anything in this server!");
   }
 
-  player.destroy();
+  player.disconnect();
   await interaction.reply('Left the voice channel!');
 }

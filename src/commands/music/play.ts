@@ -5,7 +5,11 @@ export const data = new SlashCommandBuilder()
   .setName('play')
   .setDescription('Play a song from YouTube')
   .addStringOption((option) =>
-    option.setName('query').setDescription('The song to play').setRequired(true)
+    option
+      .setName('query')
+      .setDescription('The song to play')
+      .setRequired(true)
+      .setMaxLength(200)
   );
 
 export async function execute(
