@@ -1,15 +1,15 @@
 import { Client, Collection, Events, MessageFlags } from 'discord.js';
 import { Configuration } from '../config';
-import { QuoteService } from '../services/QuoteService';
 import { createMoonlinkManager } from '../moonlink/manager';
 import { CustomClient } from '../types/CustomClient';
+import { createQuoteManager } from '../services/quote-service';
 
 export const createClient = (): CustomClient => {
   const client = new Client({
     intents: Configuration.intents,
   }) as CustomClient;
 
-  client.quoteService = new QuoteService();
+  client.quoteManager = createQuoteManager();
   client.commands = new Collection();
   client.manager = createMoonlinkManager(client);
 

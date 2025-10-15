@@ -14,7 +14,7 @@ export async function execute(message: Message): Promise<void> {
     mentionedUsers.first()?.id === message.client.user?.id
   ) {
     const client = message.client as CustomClient;
-    const quote = client.quoteService.getRandomQuote();
+    const quote = client.quoteManager.getRandomQuote();
     await message.reply(`${quote}`);
   }
 }

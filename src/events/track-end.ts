@@ -14,7 +14,7 @@ export async function execute(
   client: CustomClient
 ): Promise<void> {
   const channel = client.channels.cache.get(player.textChannelId);
-  if (channel && channel instanceof TextChannel) {
+  if (channel && channel instanceof TextChannel && type !== 'replaced') {
     await channel.send(`Track ended: **${track.title}** Reason: **${type}**`);
   }
 }

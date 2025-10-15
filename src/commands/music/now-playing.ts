@@ -6,6 +6,10 @@ import {
 import { CustomClient } from '../../types/CustomClient';
 import { formatDuration } from '../../services/util';
 
+interface RequestedBy {
+  id: string;
+}
+
 export const data = new SlashCommandBuilder()
   .setName('now-playing')
   .setDescription('Show information about the currently playing song');
@@ -34,22 +38,27 @@ export async function execute(
   };
 
   const embed = new EmbedBuilder()
-    .setTitle(`[${track.title}](${track.url})`)
-    .setColor('#0099ffff')
+    .setTitle(`${track.title}`)
+    .setURL(`${track.url}`)
+    .setAuthor({
+      name: track.author ?? 'Now Playing',
+    })
+    .setColor('#0099ff')
     .setFooter({ text: `${track.sourceName}` })
     .addFields(
-      { name: 'Uploader', value: track.author, inline: true },
-      {
-        name: 'Requested By',
-        value: `<@${track.requestedBy}>`,
-        inline: true,
-      },
       {
         name: 'Duration',
         value: `\`${formatDuration(track.position)} / ${formatDuration(
           track.duration
         )}\`\n${createProgressBar(track.position, track.duration)}`,
-        inline: false,
+        inline: true,
+      },
+      {
+        name: 'Requested By',
+        value: track.requestedBy
+          ? `<@${(track.requestedBy as RequestedBy).id}>`
+          : `N/A`,
+        inline: true,
       }
     );
 
