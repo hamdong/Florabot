@@ -1,6 +1,6 @@
 import { TextChannel } from 'discord.js';
-import { CustomClient } from '..';
 import { Player, Track } from 'moonlink.js';
+import { CustomClient } from '../types/CustomClient';
 
 export const name = 'trackStart';
 export const once = false;

@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { CustomClient } from '../../index';
+import { CustomClient } from '../../types/CustomClient';
 
 export const data = new SlashCommandBuilder()
   .setName('leave')

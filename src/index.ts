@@ -9,18 +9,12 @@ import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import { createMoonlinkManager } from './moonlink/manager';
-import { Manager } from 'moonlink.js';
 import { QuoteService } from './services/QuoteService';
+import { CustomClient } from './types/CustomClient';
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
 });
-
-export interface CustomClient extends Client {
-  quoteService: QuoteService;
-  commands: Collection<string, any>;
-  manager: Manager;
-}
 
 const client = new Client({
   intents: [

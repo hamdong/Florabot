@@ -1,5 +1,5 @@
 import { Events, Message } from 'discord.js';
-import { CustomClient } from '..';
+import { CustomClient } from '../types/CustomClient';
 
 export const name = Events.MessageCreate;
 export const once = false;

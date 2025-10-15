@@ -1,5 +1,5 @@
 import { Events } from 'discord.js';
-import { CustomClient } from '..';
+import { CustomClient } from '../types/CustomClient';
 
 export const name = Events.ClientReady;
 export const once = true;

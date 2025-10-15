@@ -1,6 +1,6 @@
-import { CustomClient } from '..';
 import { Player } from 'moonlink.js';
 import { TextChannel } from 'discord.js';
+import { CustomClient } from '../types/CustomClient';
 
 export const name = 'queueEnd';
 export const once = false;
