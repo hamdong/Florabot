@@ -6,6 +6,8 @@ import {
 import { CustomClient } from '../../types/CustomClient';
 import { formatDuration } from '../../services/util';
 
+const MAX_QUEUE_DISPLAY = 10;
+
 export const data = new SlashCommandBuilder()
   .setName('queue')
   .setDescription('Show the current music queue');
@@ -47,15 +49,23 @@ export async function execute(
 
     embed.addFields({
       name: 'Up Next:',
-      value: tracks.slice(0, 10).join('\n'),
+      value: tracks.slice(0, MAX_QUEUE_DISPLAY).join('\n'),
     });
 
     // If there are more than 10 tracks, add a note
-    if (player.queue.size > 10) {
-      embed.addFields({
-        name: 'And more...',
-        value: `${player.queue.size - 10} more tracks in the queue`,
-      });
+    if (player.queue.size > MAX_QUEUE_DISPLAY) {
+      embed.addFields(
+        {
+          name: 'Plus',
+          value: `${player.queue.size - MAX_QUEUE_DISPLAY} more tracks`,
+          inline: true,
+        },
+        {
+          name: 'Total Duration',
+          value: `\`${formatDuration(player.queue.duration)}\``,
+          inline: true,
+        }
+      );
     }
   }
 
