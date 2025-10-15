@@ -1,10 +1,10 @@
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
-  GuildMember,
   SlashCommandBuilder,
 } from 'discord.js';
 import { CustomClient } from '../../types/CustomClient';
+import { formatDuration } from '../../services/util';
 
 export const data = new SlashCommandBuilder()
   .setName('now-playing')
@@ -28,30 +28,20 @@ export async function execute(
 
   const track = player.current;
 
-  const formatDuration = (ms: number) => {
-    const seconds = Math.floor((ms / 1000) % 60);
-    const minutes = Math.floor((ms / (1000 * 60)) % 60);
-    const hours = Math.floor(ms / (1000 * 60 * 60));
-
-    return `${hours ? `${hours}:` : ''}${minutes
-      .toString()
-      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
-
   const createProgressBar = (current: number, total: number, length = 15) => {
     const progress = Math.round((current / total) * length);
     return '▬'.repeat(progress) + '❄️' + '▬'.repeat(length - progress);
   };
 
   const embed = new EmbedBuilder()
-    .setTitle('Now Playing')
-    .setColor('#0099ff')
-    .setDescription(`[${track.title}](${track.url})`)
+    .setTitle(`[${track.title}](${track.url})`)
+    .setColor('#0099ffff')
+    .setFooter({ text: `${track.sourceName}` })
     .addFields(
-      { name: 'Author', value: track.author, inline: true },
+      { name: 'Uploader', value: track.author, inline: true },
       {
         name: 'Requested By',
-        value: `<@${track.requestedBy?.toLocaleString()}>`,
+        value: `<@${track.requestedBy}>`,
         inline: true,
       },
       {

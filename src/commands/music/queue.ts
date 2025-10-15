@@ -4,6 +4,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import { CustomClient } from '../../types/CustomClient';
+import { formatDuration } from '../../services/util';
 
 export const data = new SlashCommandBuilder()
   .setName('queue')
@@ -24,16 +25,6 @@ export async function execute(
     await interaction.reply('There are no tracks in the queue!');
     return;
   }
-
-  const formatDuration = (ms: number) => {
-    const seconds = Math.floor((ms / 1000) % 60);
-    const minutes = Math.floor((ms / (1000 * 60)) % 60);
-    const hours = Math.floor(ms / (1000 * 60 * 60));
-
-    return `${hours ? `${hours}:` : ''}${minutes
-      .toString()
-      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
 
   const embed = new EmbedBuilder()
     .setTitle('Current Queue')

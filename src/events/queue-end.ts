@@ -18,10 +18,10 @@ export async function execute(
     );
 
     // Disconnect after a delay if no new tracks are added
-    setTimeout(() => {
+    setTimeout(async () => {
       if (!player.playing && player.queue.size === 0) {
         player.destroy();
-        channel.send('Disconnected due to inactivity.');
+        await channel.send('Disconnected due to inactivity.');
       }
     }, 30000); // 30 seconds
   }

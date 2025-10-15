@@ -42,7 +42,7 @@ export async function execute(
 
   const result = await client.manager.search({
     query,
-    requester: interaction.user.id,
+    requester: interaction.member?.user.id,
   });
 
   if (!result.tracks.length) {
