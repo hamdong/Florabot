@@ -36,7 +36,6 @@ export async function execute(
         guildId: guildId,
         voiceChannelId: voiceChannel.id,
         textChannelId: interaction.channelId,
-        autoPlay: true,
       });
 
   player.connect();

@@ -1,28 +1,21 @@
-import { Player, Track } from 'moonlink.js';
 import { TextChannel } from 'discord.js';
+import { Player, Track } from 'moonlink.js';
 import { CustomClient } from '../types/CustomClient';
 
-export const name = 'queueEnd';
+export const name = 'trackStuck';
 export const once = false;
 export const manager = true;
 
 export async function execute(
   player: Player,
   track: Track,
+  thresholdMs: number,
   client: CustomClient
 ): Promise<void> {
   const channel = client.channels.cache.get(player.textChannelId);
   if (channel && channel instanceof TextChannel) {
     await channel.send(
-      'Queue ended. Disconnecting in 30 seconds if no new tracks are added.'
+      `Track stuck: **${track.title}** for **${thresholdMs}ms**`
     );
-
-    // Disconnect after a delay if no new tracks are added
-    setTimeout(() => {
-      if (!player.playing && player.queue.size === 0) {
-        player.destroy();
-        channel.send('Disconnected due to inactivity.');
-      }
-    }, 30000); // 30 seconds
   }
 }
