@@ -43,6 +43,7 @@ export async function execute(
 
   const result = await client.manager.search({
     query,
+    requester: interaction.user.id,
   });
 
   if (!result.tracks.length) {
@@ -50,10 +51,42 @@ export async function execute(
     return;
   }
 
-  player.queue.add(result.tracks[0]);
-  if (!player.playing) {
-    player.play();
-  }
+  switch (result.loadType) {
+    case 'playlist':
+      player.queue.add(result.tracks);
 
-  await interaction.reply(`Added to queue: **${result.tracks[0].title}**`);
+      interaction.reply({
+        content: `Added playlist **${result.playlistInfo.name}** with ${result.tracks.length} tracks to the queue.`,
+      });
+
+      if (!player.playing) {
+        player.play();
+      }
+      break;
+
+    case 'search':
+    case 'track':
+      player.queue.add(result.tracks[0]);
+
+      interaction.reply({
+        content: `Added **${result.tracks[0].title}** to the queue.`,
+      });
+
+      if (!player.playing) {
+        player.play();
+      }
+      break;
+
+    case 'empty':
+      interaction.reply('No matches found for your query!');
+      break;
+
+    case 'error':
+      interaction.reply(
+        `An error occurred while loading the track: ${
+          result.error || 'Unknown error'
+        }`
+      );
+      break;
+  }
 }
