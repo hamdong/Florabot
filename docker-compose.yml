@@ -1,0 +1,7 @@
+services:
+  discord-florabot:
+    build: .
+    container_name: discord-florabot
+    restart: unless-stopped
+    env_file:
+      - .env
