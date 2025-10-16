@@ -1,5 +1,5 @@
 import { Events, Message } from 'discord.js';
-import { CustomClient } from '../types/CustomClient';
+import { getRandomQuote } from '../services/quote-service';
 
 export const name = Events.MessageCreate;
 export const once = false;
@@ -13,8 +13,7 @@ export async function execute(message: Message): Promise<void> {
     mentionedUsers.size === 1 &&
     mentionedUsers.first()?.id === message.client.user?.id
   ) {
-    const client = message.client as CustomClient;
-    const quote = client.quoteManager.getRandomQuote();
+    const quote = getRandomQuote();
     await message.reply(`${quote}`);
   }
 }

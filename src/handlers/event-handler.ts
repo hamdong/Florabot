@@ -4,8 +4,8 @@ import { CustomClient } from '../types/CustomClient';
 
 export const loadEvents = (client: CustomClient): void => {
   const eventsPath = join(__dirname, '../events');
-  const eventFiles = readdirSync(eventsPath).filter((file) =>
-    file.endsWith('.ts')
+  const eventFiles = readdirSync(eventsPath).filter(
+    (file) => file.endsWith('.ts') || file.endsWith('.js')
   );
 
   for (const file of eventFiles) {

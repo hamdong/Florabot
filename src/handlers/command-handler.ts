@@ -8,8 +8,8 @@ export const loadCommands = (client: CustomClient): void => {
 
   for (const folder of commandFolders) {
     const commandsPath = join(foldersPath, folder);
-    const commandFiles = readdirSync(commandsPath).filter((file) =>
-      file.endsWith('.ts')
+    const commandFiles = readdirSync(commandsPath).filter(
+      (file) => file.endsWith('.ts') || file.endsWith('.js')
     );
 
     for (const file of commandFiles) {
