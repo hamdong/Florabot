@@ -5,3 +5,26 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    depends_on:
+      - lavalink
+    networks:
+      - bot-network
+
+  lavalink:
+    image: ghcr.io/lavalink-devs/lavalink:4-alpine
+    container_name: lavalink
+    restart: unless-stopped
+    expose:
+      - 2333
+    volumes:
+      - ./lavalink/config/application.yml:/opt/Lavalink/application.yml
+      - ./lavalink/config/plugins/:/opt/Lavalink/plugins/
+    environment:
+      - _JAVA_OPTIONS=-Xmx2G
+      - LAVALINK_SERVER_PASSWORD=${LAVA_PASSWORD}
+    networks:
+      - bot-network
+
+networks:
+  bot-network:
+    driver: bridge

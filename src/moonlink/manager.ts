@@ -1,13 +1,16 @@
+import dotenv from 'dotenv';
 import { Client } from 'discord.js';
 import { Manager } from 'moonlink.js';
+
+dotenv.config();
 
 export const createMoonlinkManager = (client: Client<boolean>) => {
   return new Manager({
     nodes: [
       {
-        host: 'localhost',
+        host: 'lavalink',
         port: 2333,
-        password: 'youshallnotpass',
+        password: process.env.LAVA_PASSWORD || 'youshallnotpass',
         secure: false,
       },
     ],
