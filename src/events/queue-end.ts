@@ -1,0 +1,28 @@
+import { Player, Track } from 'moonlink.js';
+import { TextChannel } from 'discord.js';
+import { CustomClient } from '../types/CustomClient';
+
+export const name = 'queueEnd';
+export const once = false;
+export const manager = true;
+
+export async function execute(
+  player: Player,
+  track: Track,
+  client: CustomClient
+): Promise<void> {
+  const channel = client.channels.cache.get(player.textChannelId);
+  if (channel && channel instanceof TextChannel) {
+    await channel.send(
+      'Queue ended. Disconnecting in 30 seconds if no new tracks are added.'
+    );
+
+    // Disconnect after a delay if no new tracks are added
+    setTimeout(async () => {
+      if (!player.playing && player.queue.size === 0) {
+        player.destroy();
+        await channel.send('Disconnected due to inactivity.');
+      }
+    }, 30000); // 30 seconds
+  }
+}

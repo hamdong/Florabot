@@ -1,28 +1,24 @@
-import { Client, GatewayIntentBits } from 'discord.js';
-import dotenv from 'dotenv';
-import path from 'path';
-import { MessageCreate } from './events/MessageCreate';
+import { createClient } from './client';
+import { Configuration } from './config';
+import { CustomClient } from './types/CustomClient';
+import { loadCommands } from './handlers/command-handler';
+import { loadEvents } from './handlers/event-handler';
 
-dotenv.config({
-  path: path.resolve(__dirname, '../.env'),
-});
+async function main() {
+  try {
+    console.log('Starting bot...');
+    const client: CustomClient = createClient();
 
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.DirectMessages,
-  ],
-});
+    console.log('Loading commands and events...');
+    loadCommands(client);
+    loadEvents(client);
 
-const messageHandler = new MessageCreate();
+    console.log('Logging in...');
+    await client.login(Configuration.token);
+  } catch (error) {
+    console.error('Error starting bot:', error);
+    process.exit(1);
+  }
+}
 
-client.on('clientReady', () => {
-  console.log(`Logged in as ${client.user?.tag}`);
-});
-
-client.on('messageCreate', async (message) => {
-  await messageHandler.handle(message);
-});
-
-client.login(process.env.DISCORD_TOKEN);
+main();
