@@ -23,15 +23,6 @@
       - ANDROID_VR
       - ANDROID_MUSIC
       - IOS
-  lavasrc:
-    sources:
-      spotify: false # Enable Spotify source
-      applemusic: false # Enable Apple Music source
-      deezer: false # Enable Deezer source
-      yandexmusic: false # Enable Yandex Music source
-      flowerytts: false # Enable Flowery TTs source
-      youtube: false # Enable YouTube search source (https://github.com/topi314/LavaSearch)
-      vkmusic: false # Enable Vk Music source
 
 server: # REST and WS server
   port: 2333
@@ -45,9 +36,6 @@ lavalink:
     # Outdated youtube plugin can cause crashes or other issues
     # dependency: UPDATE Plugin at: https://github.com/lavalink-devs/youtube-source#plugin
     #  snapshot: false # Set to true if you want to use a snapshot version.
-    # Lavasrc adds additional data to queries but is not required for basic functionality
-    #- dependency: https://github.com/topi314/LavaSrc?tab=readme-ov-file#lavalink-usage
-    #  snapshot: false
   server:
     password: 'youshallnotpass'
     sources:
