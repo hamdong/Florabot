@@ -13,8 +13,8 @@
     allowDirectPlaylistIds: true # Whether just playlist IDs can match. If false, only complete URLs will be loaded.
     # The clients to use for track loading. See below for a list of valid clients.
     # Clients are queried in the order they are given (left-to-right)
+    # https://github.com/lavalink-devs/youtube-source?tab=readme-ov-file#available-clients
     clients:
-      - MUSIC
       - WEB
       - MWEB
       - WEBEMBEDDED
@@ -25,21 +25,13 @@
       - IOS
   lavasrc:
     sources:
-      spotify: true # Enable Spotify source
+      spotify: false # Enable Spotify source
       applemusic: false # Enable Apple Music source
       deezer: false # Enable Deezer source
       yandexmusic: false # Enable Yandex Music source
       flowerytts: false # Enable Flowery TTs source
       youtube: false # Enable YouTube search source (https://github.com/topi314/LavaSearch)
       vkmusic: false # Enable Vk Music source
-    spotify:
-      clientId: 'XXXXX'
-      clientSecret: 'XXXXX'
-      spDc: 'your sp dc cookie' # the sp dc cookie used for accessing the spotify lyrics api
-      countryCode: 'US' # the country code you want to use for filtering the artists top tracks. See https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-      playlistLoadLimit: 6 # The number of pages at 100 tracks each
-      albumLoadLimit: 6 # The number of pages at 50 tracks each
-      localFiles: false #  Enable local files support with Spotify playlists. Please note `uri` & `isrc` will be `null` & `identifier` will be `"local"`
 
 server: # REST and WS server
   port: 2333
@@ -47,36 +39,37 @@ server: # REST and WS server
   http2:
     enabled: false # Whether to enable HTTP/2 support
 
+# UPDATE Plugin at: https://github.com/lavalink-devs/youtube-source#plugin
+# Replace VERSION with the current version as shown by the Releases tab or a long commit hash for snapshots.
+# Outdated youtube plugin can cause crashes or other issues
 lavalink:
   plugins:
-    # UPDATE Plugin at: https://github.com/lavalink-devs/youtube-source#plugin
-    # Replace VERSION with the current version as shown by the Releases tab or a long commit hash for snapshots.
-    # Note from Ham: Plugins can be the cause for failed playback so always check for newest Lavalink.jar and youtube-plugin.jar
-    - dependency: 'dev.lavalink.youtube:youtube-plugin:1.14.0'
+    - dependency: 'dev.lavalink.youtube:youtube-plugin:1.15.0'
       snapshot: false # Set to true if you want to use a snapshot version.
-    - dependency: 'com.github.topi314.lavasrc:lavasrc-plugin:4.3.0'
-      snapshot: false
+    # Lavasrc adds additional data to queries but is not required for basic functionality
+    #- dependency: https://github.com/topi314/LavaSrc?tab=readme-ov-file#lavalink-usage
+    #  snapshot: false
   server:
     password: 'youshallnotpass'
     sources:
       youtube: false
-      bandcamp: true
-      soundcloud: true
-      twitch: true
-      vimeo: true
-      http: true
+      bandcamp: false
+      soundcloud: false
+      twitch: false
+      vimeo: false
+      http: false
       local: false
     filters: # All filters are enabled by default
-      volume: true
-      equalizer: true
-      karaoke: true
-      timescale: true
-      tremolo: true
-      vibrato: true
-      distortion: true
-      rotation: true
-      channelMix: true
-      lowPass: true
+      volume: false
+      equalizer: false
+      karaoke: false
+      timescale: false
+      tremolo: false
+      vibrato: false
+      distortion: false
+      rotation: false
+      channelMix: false
+      lowPass: false
     nonAllocatingFrameBuffer: false # Setting to true reduces the number of allocations made by each player at the expense of frame rebuilding (e.g. non-instantaneous volume changes)
     bufferDurationMs: 400 # The duration of the NAS buffer. Higher values fare better against longer GC pauses. Duration <= 0 to disable JDA-NAS. Minimum of 40ms, lower values may introduce pauses.
     frameBufferDurationMs: 5000 # How many milliseconds of audio to keep buffered
