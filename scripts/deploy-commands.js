@@ -11,43 +11,55 @@ const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 
 const commands = [];
+const commandsPath = path.join(__dirname, '../dist/commands');
 
-const foldersPath = path.join(__dirname, '../dist/commands'); // <- Use compiled JS
-const commandFolders = fs.readdirSync(foldersPath);
+/**
+ * Loads a single command module and pushes its data to the commands array.
+ */
+async function loadCommand(filePath) {
+  try {
+    const commandModule = await import(pathToFileURL(filePath).href);
+    const command = commandModule.default || commandModule;
 
-(async () => {
-  for (const folder of commandFolders) {
-    const commandsPath = path.join(foldersPath, folder);
-    const commandFiles = fs
-      .readdirSync(commandsPath)
-      .filter((file) => file.endsWith('.js')); // <- Only read .js now
+    if ('data' in command && 'execute' in command) {
+      commands.push(command.data.toJSON());
+    } else {
+      console.warn(
+        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+      );
+    }
+  } catch (err) {
+    console.error(`❌ Failed to load command at ${filePath}:`, err);
+  }
+}
 
-    for (const file of commandFiles) {
-      const filePath = path.join(commandsPath, file);
+/**
+ * Loads all commands from a directory, including subfolders.
+ */
+async function loadCommandsFromDirectory(basePath) {
+  const entries = fs.readdirSync(basePath, { withFileTypes: true });
 
-      try {
-        const commandModule = await import(pathToFileURL(filePath).href);
-        const command = commandModule.default || commandModule;
+  for (const entry of entries) {
+    const entryPath = path.join(basePath, entry.name);
 
-        if ('data' in command && 'execute' in command) {
-          commands.push(command.data.toJSON());
-        } else {
-          console.warn(
-            `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-          );
-        }
-      } catch (err) {
-        console.error(`Failed to load command at ${filePath}:`, err);
-      }
+    if (entry.isDirectory()) {
+      await loadCommandsFromDirectory(entryPath); // recursively handle nested folders
+    } else if (entry.isFile() && entry.name.endsWith('.js')) {
+      await loadCommand(entryPath);
     }
   }
+}
+
+/**
+ * Registers the loaded commands with Discord via the REST API.
+ */
+async function deployCommands() {
+  await loadCommandsFromDirectory(commandsPath);
 
   const rest = new REST({ version: '10' }).setToken(token);
 
   try {
-    console.log(
-      `Started refreshing ${commands.length} application (/) commands.`
-    );
+    console.log(`🔄 Refreshing ${commands.length} application (/) commands...`);
 
     const data = await rest.put(
       Routes.applicationGuildCommands(clientId, guildId),
@@ -55,9 +67,11 @@ const commandFolders = fs.readdirSync(foldersPath);
     );
 
     console.log(
-      `Successfully reloaded ${data.length} application (/) commands.`
+      `✅ Successfully reloaded ${data.length} application (/) commands.`
     );
   } catch (error) {
-    console.error(error);
+    console.error('❌ Error reloading commands:', error);
   }
-})();
+}
+
+deployCommands();
