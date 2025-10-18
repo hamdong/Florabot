@@ -21,7 +21,7 @@ To run Florabot locally, follow these steps:
 1. Clone the Repository:
 
 ```bash
-git clone https://github.com/your-username/Florabot.git
+git clone https://github.com/hamdong/Florabot.git
 cd Florabot
 ```
 
