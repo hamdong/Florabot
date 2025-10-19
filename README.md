@@ -56,4 +56,5 @@ For metrics gathering, run once:
 
 ```bash
 docker network create florabot-metrics
+docker network create lavalink-metrics
 ```

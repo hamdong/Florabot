@@ -25,9 +25,12 @@ services:
       - LAVALINK_SERVER_PASSWORD=${LAVA_PASSWORD}
     networks:
       - bot-network
+      - lavalink-metrics
 
 networks:
   bot-network:
     driver: bridge
   florabot-metrics:
+    external: true
+  lavalink-metrics:
     external: true
