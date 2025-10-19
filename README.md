@@ -43,11 +43,17 @@ DISCORD_TOKEN=your-token-here
 Build and start the container:
 
 ```bash
-docker-compose up --build
+docker-compose --env-file .env up --build
 ```
 
 Stop and remove the container:
 
 ```bash
-docker-compose down
+docker-compose --env-file .env down
+```
+
+For metrics gathering, run once:
+
+```bash
+docker network create florabot-metrics
 ```

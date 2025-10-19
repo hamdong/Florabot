@@ -9,6 +9,7 @@ services:
       - lavalink
     networks:
       - bot-network
+      - florabot-metrics
 
   lavalink:
     image: ghcr.io/lavalink-devs/lavalink:4-alpine
@@ -28,3 +29,5 @@ services:
 networks:
   bot-network:
     driver: bridge
+  florabot-metrics:
+    external: true

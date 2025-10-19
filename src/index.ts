@@ -3,6 +3,7 @@ import { Configuration } from './config';
 import { CustomClient } from './types/CustomClient';
 import { loadCommands } from './handlers/command-handler';
 import { loadEvents } from './handlers/event-handler';
+import { startMetricsServer } from './metrics';
 
 async function main() {
   try {
@@ -12,6 +13,9 @@ async function main() {
     console.log('Loading commands and events...');
     loadCommands(client);
     loadEvents(client);
+
+    console.log('Starting metrics server...');
+    startMetricsServer();
 
     console.log('Logging in...');
     await client.login(Configuration.token);

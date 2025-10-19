@@ -8,6 +8,11 @@ import {
 import { Configuration } from '../config';
 import { createMoonlinkManager } from '../moonlink/manager';
 import { CustomClient } from '../types/CustomClient';
+import {
+  commandCounter,
+  commandErrorCounter,
+  commandLatencyHistogram,
+} from '../metrics/collectors';
 
 export const createClient = (): CustomClient => {
   const client = new Client({
@@ -23,6 +28,8 @@ export const createClient = (): CustomClient => {
 
   client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
+
+    const commandName = interaction.commandName;
     const command = (interaction.client as CustomClient).commands.get(
       interaction.commandName
     );
@@ -33,6 +40,12 @@ export const createClient = (): CustomClient => {
       );
       return;
     }
+
+    commandCounter.inc({ command_name: commandName });
+    // Start timer for latency tracking
+    const end = commandLatencyHistogram.startTimer({
+      command_name: commandName,
+    });
 
     try {
       const node = client.manager.nodes.get('default');
@@ -46,6 +59,9 @@ export const createClient = (): CustomClient => {
         await command.execute(interaction, client);
       }
     } catch (error) {
+      // Increment error count
+      commandErrorCounter.inc({ command_name: commandName });
+
       console.error(error);
 
       const replyOptions: InteractionReplyOptions = {
@@ -58,6 +74,9 @@ export const createClient = (): CustomClient => {
       } else {
         await interaction.reply(replyOptions);
       }
+    } finally {
+      // Stop timer and record duration
+      end();
     }
   });
 
