@@ -1,0 +1,36 @@
+name: Deploy
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ${{ secrets.APP_PATH }}
+            echo "Pulling latest code..."
+            git fetch origin main
+            git reset --hard origin/main
+            echo "Building and updating container (minimal downtime)..."
+            docker compose pull
+            docker compose --env-file .env up --build
+            docker image prune -f
+            echo "✅ Deployment complete"
+
+            # Wait a few seconds for container startup
+            sleep 5
+
+            # Check if container is running
+            if docker compose ps | grep -q "discord-florabot"; then
+              echo "✅ Florabot container is running"
+            else
+              echo "❌ Florabot container failed to start"
+              exit 1
+            fi
