@@ -52,6 +52,8 @@ Stop and remove the container:
 docker-compose --env-file .env down
 ```
 
+### Metrics Setup
+
 For metrics gathering, run once:
 
 ```bash
