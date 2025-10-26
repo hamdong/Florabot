@@ -5,32 +5,27 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, florabot]
     steps:
-      - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.1.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd ${{ secrets.APP_PATH }}
-            echo "Pulling latest code..."
-            git fetch origin main
-            git reset --hard origin/main
-            echo "Building and updating container (minimal downtime)..."
-            docker compose pull
-            docker compose --env-file .env up --build
-            docker image prune -f
-            echo "✅ Deployment complete"
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            # Wait a few seconds for container startup
-            sleep 5
+      - name: Deploy Florabot
+        run: |
+          cd ${{ secrets.APP_PATH }}
+          git fetch origin main
+          git reset --hard origin/main
+          docker compose pull
+          docker compose --env-file .env up -d --build
+          docker image prune -f
 
-            # Check if container is running
-            if docker compose ps | grep -q "discord-florabot"; then
-              echo "✅ Florabot container is running"
-            else
-              echo "❌ Florabot container failed to start"
-              exit 1
-            fi
+          # Wait a few seconds for container startup
+          sleep 5
+
+          # Verify container is running
+          if docker compose ps | grep -q "discord-florabot"; then
+            echo "✅ Florabot container is running"
+          else
+            echo "❌ Florabot container failed to start"
+            exit 1
+          fi
