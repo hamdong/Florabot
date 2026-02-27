@@ -3,8 +3,8 @@ import { CustomClient } from '../../types/CustomClient';
 import { handlePlay } from '../../handlers/play-handler';
 
 export const data = new SlashCommandBuilder()
-  .setName('play')
-  .setDescription('Play a song from YouTube')
+  .setName('play-now')
+  .setDescription('Play a song immediately, skipping the current track')
   .addStringOption((option) =>
     option
       .setName('query')
@@ -17,5 +17,5 @@ export async function execute(
   interaction: ChatInputCommandInteraction,
   client: CustomClient,
 ): Promise<void> {
-  await handlePlay(interaction, client);
+  await handlePlay(interaction, client, 'now');
 }

@@ -43,13 +43,13 @@ DISCORD_TOKEN=your-token-here
 Build and start the container:
 
 ```bash
-docker-compose --env-file .env up --build
+docker compose --env-file .env up --build
 ```
 
 Stop and remove the container:
 
 ```bash
-docker-compose --env-file .env down
+docker compose --env-file .env down
 ```
 
 ### Metrics Setup
