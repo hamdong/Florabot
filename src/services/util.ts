@@ -23,7 +23,7 @@ export const formatDuration = (ms: number) => {
 export const createPlayerEmbed = (track: Track) => {
   const embed = new EmbedBuilder()
     .setTitle(`${track.title}`)
-    .setURL(`${track.url}`)
+    .setURL(`${track.uri}`)
     .setAuthor({
       name: track.author ?? 'Now Playing',
     })
@@ -33,17 +33,15 @@ export const createPlayerEmbed = (track: Track) => {
       {
         name: 'Duration',
         value: `\`${formatDuration(track.position)} / ${formatDuration(
-          track.duration
+          track.duration,
         )}\`\n${createProgressBar(track.position, track.duration)}`,
         inline: true,
       },
       {
         name: 'Requested By',
-        value: track.requestedBy
-          ? `<@${(track.requestedBy as RequestedBy).id}>`
-          : `N/A`,
+        value: track.requester ? `<@${track.requester}>` : `N/A`,
         inline: true,
-      }
+      },
     );
 
   if (track.artworkUrl) {

@@ -7,9 +7,9 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(
   interaction: ChatInputCommandInteraction,
-  client: CustomClient
+  client: CustomClient,
 ): Promise<void> {
-  const player = client.manager.getPlayer(interaction.guild!.id);
+  const player = client.manager.players.get(interaction.guild!.id);
 
   if (!player) {
     await interaction.reply("I'm not playing anything in this server!");
@@ -17,5 +17,6 @@ export async function execute(
   }
 
   player.destroy();
+
   await interaction.reply('Left the voice channel!');
 }

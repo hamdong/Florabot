@@ -24,15 +24,13 @@ export async function handlePlay(
   const query = interaction.options.getString('query', true);
   const guildId = interaction.guild!.id;
 
-  const player = client.manager.hasPlayer(guildId)
-    ? client.manager.getPlayer(guildId)
-    : client.manager.createPlayer({
-        guildId,
-        voiceChannelId: voiceChannel.id,
-        textChannelId: interaction.channelId,
-      });
+  const player = client.manager.players.create({
+    guildId,
+    voiceChannelId: voiceChannel.id,
+    textChannelId: interaction.channelId,
+  });
 
-  player.connect();
+  await player.connect();
 
   const result = await client.manager.search({
     query,
@@ -84,8 +82,8 @@ export async function handlePlay(
   }
 
   if (mode === 'now' && player.playing) {
-    player.skip();
+    await player.skip();
   } else if (!player.playing) {
-    player.play();
+    await player.play();
   }
 }

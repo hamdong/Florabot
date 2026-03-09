@@ -11,46 +11,43 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(
   interaction: ChatInputCommandInteraction,
-  node: Node
+  node: Node,
 ): Promise<void> {
-  const status = await node.getNodeStatus();
-
-  const healthy =
-    status.connected &&
-    status.health.responding &&
-    (status.health.status !== 'overloaded' ||
-      status.health.performance === 'excellent');
+  const stats = node.stats;
 
   const embed = new EmbedBuilder()
     .setTitle('My Status')
     .setDescription(node.connected ? '🟢 Connected' : '🔴 Disconnected')
     .addFields(
-      { name: 'CPU', value: `${status.stats.cpu.toFixed(2)}%`, inline: true },
+      { name: 'Players', value: `${stats?.players ?? 0}`, inline: true },
+      { name: 'Playing', value: `${stats?.playingPlayers ?? 0}`, inline: true },
       {
-        name: 'Memory',
-        value: `${(status.stats.memory / 1024 / 1024).toFixed(2)} MB`,
+        name: 'Uptime',
+        value: `${Math.floor((stats?.uptime ?? 0) / 1000)}s`,
         inline: true,
       },
-      { name: 'Health', value: status.health.status, inline: true },
+      { name: 'CPU Cores', value: `${stats?.cpu.cores ?? 0}`, inline: true },
       {
-        name: 'Needs Restart',
-        value: status.health.needsRestart ? '⚠️ Recommended' : '✅ No',
-        inline: true,
-      },
-      {
-        name: 'Responding',
-        value: `${status.health.responding}`,
+        name: 'System Load',
+        value: `${((stats?.cpu.systemLoad ?? 0) * 100).toFixed(2)}%`,
         inline: true,
       },
       {
-        name: 'Performance',
-        value: status.health.performance,
+        name: 'Lavalink Load',
+        value: `${((stats?.cpu.lavalinkLoad ?? 0) * 100).toFixed(2)}%`,
         inline: true,
-      }
+      },
+      {
+        name: 'Memory Used',
+        value: `${((stats?.memory.used ?? 0) / 1048576).toFixed(2)} MB`,
+        inline: true,
+      },
+      {
+        name: 'Memory Allocated',
+        value: `${((stats?.memory.allocated ?? 0) / 1048576).toFixed(2)} MB`,
+        inline: true,
+      },
     )
-    .setColor('#0099ff')
-    .setFooter({
-      text: healthy ? 'All systems are a go!' : "I don't feel so good...",
-    });
+    .setColor('#0099ff');
   await interaction.reply({ embeds: [embed] });
 }

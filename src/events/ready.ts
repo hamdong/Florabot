@@ -10,5 +10,5 @@ export async function execute(client: CustomClient): Promise<void> {
   console.log(`Ready! Logged in as ${client.user.tag}`);
 
   await client.manager.init(client.user.id);
-  console.log(`Manager initialized? ${client.manager.initialize}`);
+  console.log(`Manager initialized? ${client.manager.initialized}`);
 }

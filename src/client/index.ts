@@ -22,6 +22,8 @@ export const createClient = (): CustomClient => {
   client.commands = new Collection();
   client.manager = createMoonlinkManager(client);
 
+  // client.manager.on('debug', (msg) => console.log(`[Moonlink] ${msg}`));
+
   client.on('raw', (packet) => {
     client.manager.packetUpdate(packet);
   });
@@ -31,12 +33,12 @@ export const createClient = (): CustomClient => {
 
     const commandName = interaction.commandName;
     const command = (interaction.client as CustomClient).commands.get(
-      interaction.commandName
+      interaction.commandName,
     );
 
     if (!command) {
       console.error(
-        `No command matching ${interaction.commandName} was found.`
+        `No command matching ${interaction.commandName} was found.`,
       );
       return;
     }
@@ -48,7 +50,7 @@ export const createClient = (): CustomClient => {
     });
 
     try {
-      const node = client.manager.nodes.get('default');
+      const node = client.manager.nodes.findNode();
 
       // Special-case commands that need node
       const nodeOnlyCommands = new Set(['status']);

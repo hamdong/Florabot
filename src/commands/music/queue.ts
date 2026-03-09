@@ -35,7 +35,7 @@ export async function execute(
   if (player.current) {
     embed.setDescription(
       `**Now Playing:**\n[${player.current.title}](${
-        player.current.url
+        player.current.uri
       }) | \`${formatDuration(player.current.duration)}\``,
     );
   }
@@ -45,7 +45,7 @@ export async function execute(
 
     for (let i = 0; i < Math.min(player.queue.size, MAX_QUEUE_DISPLAY); i++) {
       const track = player.queue.tracks[i];
-      const line = `${i + 1}. [${track.title}](${track.url}) | \`${formatDuration(track.duration)}\`\n`;
+      const line = `${i + 1}. [${track.title}](${track.uri}) | \`${formatDuration(track.duration)}\`\n`;
 
       // 1024 is the hard limit; 1000 leaves room for the "..." footer
       if (queueValue.length + line.length > 1000) {
