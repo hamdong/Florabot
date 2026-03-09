@@ -17,10 +17,10 @@ export async function execute(
 
     const savedTextChannelId = player.textChannelId;
 
-    player.destroy();
+    await player.destroy();
 
     if (savedTextChannelId) {
-      const channel = client.channels.cache.get(player.textChannelId);
+      const channel = client.channels.cache.get(savedTextChannelId);
       if (channel && channel instanceof TextChannel) {
         await channel.send(
           'You really... just left me alone? :( Leaving voice channel...',

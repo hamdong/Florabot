@@ -11,7 +11,7 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(
   interaction: ChatInputCommandInteraction,
-  client: CustomClient
+  client: CustomClient,
 ): Promise<void> {
   const player = client.manager.players.get(interaction.guild!.id);
 
@@ -23,7 +23,7 @@ export async function execute(
   const member = interaction.member as GuildMember;
   if (member.voice.channel?.id !== player.voiceChannelId) {
     await interaction.reply(
-      'You need to be in the same voice channel as me to use this command!'
+      'You need to be in the same voice channel as me to use this command!',
     );
     return;
   }
@@ -33,7 +33,7 @@ export async function execute(
     return;
   }
 
-  player.pause();
+  await player.pause();
 
   await interaction.reply('Paused the player.');
 }

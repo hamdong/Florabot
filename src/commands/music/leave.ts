@@ -16,7 +16,7 @@ export async function execute(
     return;
   }
 
-  player.destroy();
+  await player.destroy();
 
   await interaction.reply('Left the voice channel!');
 }
