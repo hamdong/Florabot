@@ -11,6 +11,8 @@ export async function execute(
   const oldChannel = oldState.channel;
   const client = oldState.client as CustomClient;
 
+  if (oldState.member?.id === client.user?.id) return;
+
   if (oldChannel && oldChannel.members.size === 1) {
     const player = client.manager.players.get(oldChannel.guild.id);
     if (!player || player.voiceChannelId !== oldChannel.id) return;
@@ -23,7 +25,7 @@ export async function execute(
       const channel = client.channels.cache.get(savedTextChannelId);
       if (channel && channel instanceof TextChannel) {
         await channel.send(
-          'You really... just left me alone? :( Leaving voice channel...',
+          'You really... just left me alone? Leaving voice channel...',
         );
       }
     }
