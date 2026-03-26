@@ -13,7 +13,8 @@ export async function execute(
   interaction: ChatInputCommandInteraction,
   client: CustomClient,
 ): Promise<void> {
-  const player = client.manager.players.get(interaction.guild!.id);
+  const guildId = interaction.guild!.id;
+  const player = client.manager.players.get(guildId);
 
   if (!player) {
     await interaction.reply('There is nothing playing in this server!');
@@ -30,5 +31,9 @@ export async function execute(
 
   await player.stop();
 
-  await interaction.reply('Stopped playback.');
+  client.startLeaveTimeout(guildId, 5);
+
+  await interaction.reply(
+    'Stopped playback. I will leave the channel in 5 minutes if no new tracks are added.',
+  );
 }

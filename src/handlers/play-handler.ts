@@ -24,6 +24,8 @@ export async function handlePlay(
   const query = interaction.options.getString('query', true);
   const guildId = interaction.guild!.id;
 
+  client.resetLeaveTimeout(guildId);
+
   const player = client.manager.players.create({
     guildId,
     voiceChannelId: voiceChannel.id,

@@ -13,7 +13,8 @@ export async function execute(
   interaction: ChatInputCommandInteraction,
   client: CustomClient,
 ): Promise<void> {
-  const player = client.manager.players.get(interaction.guild!.id);
+  const guildId = interaction.guild!.id;
+  const player = client.manager.players.get(guildId);
 
   if (!player) {
     await interaction.reply('There is nothing playing in this server!');
@@ -35,5 +36,9 @@ export async function execute(
 
   await player.pause();
 
-  await interaction.reply('Paused the player.');
+  client.startLeaveTimeout(guildId, 2);
+
+  await interaction.reply(
+    'Paused the player. I will leave the channel in 2 minutes if not resumed.',
+  );
 }

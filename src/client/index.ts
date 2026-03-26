@@ -22,6 +22,34 @@ export const createClient = (): CustomClient => {
   client.commands = new Collection();
   client.manager = createMoonlinkManager(client);
 
+  client.leaveTimeouts = new Map();
+
+  client.resetLeaveTimeout = (guildId: string) => {
+    const timeout = client.leaveTimeouts.get(guildId);
+    if (timeout) {
+      clearTimeout(timeout);
+      client.leaveTimeouts.delete(guildId);
+    }
+  };
+
+  client.startLeaveTimeout = (guildId: string, minutes: number) => {
+    // Always clear existing before starting a new one
+    client.resetLeaveTimeout(guildId);
+
+    const timeout = setTimeout(
+      async () => {
+        const player = client.manager.players.get(guildId);
+        if (player) {
+          await player.destroy();
+        }
+        client.leaveTimeouts.delete(guildId);
+      },
+      minutes * 60 * 1000,
+    );
+
+    client.leaveTimeouts.set(guildId, timeout);
+  };
+
   // client.manager.on('debug', (msg) => console.log(`[Moonlink] ${msg}`));
 
   client.on('raw', (packet) => {
