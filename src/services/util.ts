@@ -1,10 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import { Track } from 'moonlink.js';
 
-interface RequestedBy {
-  id: string;
-}
-
 const createProgressBar = (current: number, total: number, length = 15) => {
   const progress = Math.round((current / total) * length);
   return '▬'.repeat(progress) + '❄️' + '▬'.repeat(length - progress);

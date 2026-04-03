@@ -24,9 +24,7 @@ export async function execute(
     if (savedTextChannelId) {
       const channel = client.channels.cache.get(savedTextChannelId);
       if (channel && channel instanceof TextChannel) {
-        await channel.send(
-          'You really... just left me alone? Leaving voice channel...',
-        );
+        await channel.send('Happy to be of service! Leaving voice channel...');
       }
     }
   }
