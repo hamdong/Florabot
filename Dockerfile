@@ -1,21 +1,31 @@
-# Use Node image built for ARM (works with Raspberry Pi)
-FROM node:22-bullseye
+# Build & Test
+FROM node:22-bullseye AS builder
 
-# Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
 COPY package*.json ./
+# Install everything (including Jest)
 RUN npm install
 
-# Copy bot source
 COPY . .
 
-# Run the build step (this creates the dist folder)
+# Run tests
+RUN npm test
+
+# Build the TypeScript project
 RUN npm run build
 
-# Expose port if needed (not for Discord bots, typically)
-# EXPOSE 3000
+# Production
+FROM node:22-bullseye
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+# Install ONLY production dependencies (--omit=dev)
+RUN npm install --omit=dev
+
+# Copy only the compiled code from the builder stage
+COPY --from=builder /usr/src/app/dist ./dist
 
 # Run the bot
 CMD ["node", "dist/index.js"]
