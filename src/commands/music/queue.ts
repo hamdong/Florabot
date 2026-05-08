@@ -5,6 +5,7 @@ import {
 } from 'discord.js';
 import { CustomClient } from '../../types/CustomClient';
 import { formatDuration } from '../../services/util';
+import { tryGetPlayer } from '../../services/validation';
 
 const MAX_QUEUE_DISPLAY = 10;
 
@@ -16,12 +17,8 @@ export async function execute(
   interaction: ChatInputCommandInteraction,
   client: CustomClient,
 ): Promise<void> {
-  const player = client.manager.players.get(interaction.guild!.id);
-
-  if (!player) {
-    await interaction.reply('There is nothing playing in this server!');
-    return;
-  }
+  const player = await tryGetPlayer(interaction, client);
+  if (!player) return;
 
   if (!player.current && player.queue.size === 0) {
     await interaction.reply('There are no tracks in the queue!');

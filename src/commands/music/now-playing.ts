@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { CustomClient } from '../../types/CustomClient';
 import { createPlayerEmbed } from '../../services/util';
+import { tryGetPlayer } from '../../services/validation';
 
 export const data = new SlashCommandBuilder()
   .setName('now-playing')
@@ -8,14 +9,10 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(
   interaction: ChatInputCommandInteraction,
-  client: CustomClient
+  client: CustomClient,
 ): Promise<void> {
-  const player = client.manager.players.get(interaction.guild!.id);
-
-  if (!player) {
-    await interaction.reply('There is nothing playing in this server!');
-    return;
-  }
+  const player = await tryGetPlayer(interaction, client);
+  if (!player) return;
 
   if (!player.current) {
     await interaction.reply('Nothing is playing!');

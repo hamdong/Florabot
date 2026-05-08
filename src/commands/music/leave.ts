@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { CustomClient } from '../../types/CustomClient';
+import { tryGetPlayer } from '../../services/validation';
 
 export const data = new SlashCommandBuilder()
   .setName('leave')
@@ -9,12 +10,8 @@ export async function execute(
   interaction: ChatInputCommandInteraction,
   client: CustomClient,
 ): Promise<void> {
-  const player = client.manager.players.get(interaction.guild!.id);
-
-  if (!player) {
-    await interaction.reply("I'm not playing anything in this server!");
-    return;
-  }
+  const player = await tryGetPlayer(interaction, client);
+  if (!player) return;
 
   await player.destroy();
 

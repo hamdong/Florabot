@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 import { CustomClient } from '../types/CustomClient';
 import { addTracksToQueue } from '../services/queue-service';
+import { validateUserInVoiceChannel } from '../services/validation';
 
 type PlayMode = 'normal' | 'priority' | 'now';
 
@@ -9,17 +10,8 @@ export async function handlePlay(
   client: CustomClient,
   mode: PlayMode = 'normal',
 ): Promise<void> {
-  const member = interaction.member;
-  if (!member || !('voice' in member)) {
-    await interaction.reply('Could not determine your voice state!');
-    return;
-  }
-
-  const voiceChannel = member.voice.channel;
-  if (!voiceChannel) {
-    await interaction.reply('You need to be in a voice channel!');
-    return;
-  }
+  const voiceChannel = await validateUserInVoiceChannel(interaction);
+  if (!voiceChannel) return;
 
   const query = interaction.options.getString('query', true);
   const guildId = interaction.guild!.id;
